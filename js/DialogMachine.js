@@ -29,7 +29,7 @@ export default class DialogMachine extends TalkMachine {
     this.buttonPressCounter = 0;
     // Voice presets [voice index, pitch, rate]
     this.preset_voice_1 = [1, 1, 0.8];
-    // turn off all simulated LEDs
+    // turn off all LEDs
     this.ledsAllOff();
     // clear console
     this.fancyLogger.clearConsole();
@@ -73,6 +73,7 @@ export default class DialogMachine extends TalkMachine {
         break;
 
       case 'choose-color':
+        // trigger on button release
         if (button == 0) {
           // blue
           this.nextState = 'choose-blue';
@@ -83,13 +84,14 @@ export default class DialogMachine extends TalkMachine {
           this.nextState = 'choose-yellow';
           this.goToNextState();
         }
-        this.ledsAllChangeColor('green', 1);
+
         break;
 
       case 'choose-blue':
         this.fancyLogger.logMessage(
           'blue was a good choice, press any button to continue'
         );
+        this.ledsAllChangeColor('green', 0);
         this.nextState = 'can-speak';
         break;
 
@@ -97,6 +99,7 @@ export default class DialogMachine extends TalkMachine {
         this.fancyLogger.logMessage(
           'yellow was a bad choice, press blue button to continue'
         );
+        this.ledsAllChangeColor('red', 0);
         this.nextState = 'choose-color';
         this.goToNextState();
         break;
@@ -104,6 +107,7 @@ export default class DialogMachine extends TalkMachine {
       case 'can-speak':
         this.speak('I can speak, i can count. Press a button.');
         this.nextState = 'count-press';
+        this.ledsAllChangeColor('blue', 2);
         break;
 
       case 'count-press':
@@ -127,6 +131,7 @@ export default class DialogMachine extends TalkMachine {
 
       case 'enough-pressed':
         this.speak('Enough is enough! I dont want to be pressed anymore!');
+        this.ledsAllChangeColor('red', 1);
         break;
 
       default:
